@@ -13,6 +13,12 @@ This project generates editorial blogs with:
 - Execution plan & evidence display
 
 ---
+# Live Link
+Try it here - https://ai-blogwriter.streamlit.app/
+
+
+# Video Demo
+https://github.com/user-attachments/assets/fb6747c0-5609-4a6e-9abb-a4884e281a41
 
 # Features
 
