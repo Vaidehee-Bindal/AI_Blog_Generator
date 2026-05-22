@@ -316,12 +316,17 @@ Generated blogs include:
 - Research-backed content
 - Editorial formatting
 - Markdown export
-<img width="1917" height="991" alt="image" src="https://github.com/user-attachments/assets/2320d4ca-d648-4e33-822a-a8bf12aed595" />
-<img width="1919" height="990" alt="image" src="https://github.com/user-attachments/assets/3a996d9b-eaa3-40ca-b053-6278fe5cd61c" />
-<img width="1919" height="995" alt="image" src="https://github.com/user-attachments/assets/56aaca19-8ff7-4693-a75d-18fd2d3aaa25" />
-<img width="1919" height="982" alt="image" src="https://github.com/user-attachments/assets/1ed7a908-8d4d-4d89-9617-fe7156ba4123" />
-<img width="1919" height="990" alt="image" src="https://github.com/user-attachments/assets/c9a2f3a5-d1dc-44ea-b7d5-657fdc328a7d" />
-<img width="1919" height="990" alt="image" src="https://github.com/user-attachments/assets/fe2a0c58-afd2-4b80-aa95-679b0f6b4359" />
+<img width="1917" height="974" alt="image" src="https://github.com/user-attachments/assets/60d5e107-9684-4218-b1ce-ad6091707a1e" />
+<img width="1919" height="1031" alt="image" src="https://github.com/user-attachments/assets/95447de7-bd71-433a-be55-a126a8d44f73" />
+<img width="1919" height="1031" alt="image" src="https://github.com/user-attachments/assets/1b1e8fe5-0932-41a7-89c9-b0d7b5f70c8a" />
+<img width="1919" height="1030" alt="image" src="https://github.com/user-attachments/assets/734652ec-d64a-4580-a9d1-849b5d654039" />
+<img width="1919" height="1025" alt="image" src="https://github.com/user-attachments/assets/450f0f8b-9b37-49b4-976c-37d101501caa" />
+<img width="1919" height="1025" alt="image" src="https://github.com/user-attachments/assets/1e1eb956-927e-477b-8553-988b51288c99" />
+<img width="1919" height="1025" alt="image" src="https://github.com/user-attachments/assets/3b0f54da-565e-4a52-a04c-a82fd044acc0" />
+<img width="1919" height="1014" alt="image" src="https://github.com/user-attachments/assets/8cac4e62-27b9-4dac-919f-1fea6ce3d459" />
+<img width="1917" height="1028" alt="image" src="https://github.com/user-attachments/assets/b907cebd-8af8-4528-b63d-ddea95eb658a" />
+<img width="1919" height="1028" alt="image" src="https://github.com/user-attachments/assets/81a4b82d-0e08-467c-856b-5c7093ccfcca" />
+
 
 ---
 
