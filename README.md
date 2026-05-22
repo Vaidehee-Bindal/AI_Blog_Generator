@@ -320,7 +320,6 @@ Generated blogs include:
 <img width="1919" height="1031" alt="image" src="https://github.com/user-attachments/assets/95447de7-bd71-433a-be55-a126a8d44f73" />
 <img width="1919" height="1031" alt="image" src="https://github.com/user-attachments/assets/1b1e8fe5-0932-41a7-89c9-b0d7b5f70c8a" />
 <img width="1919" height="1030" alt="image" src="https://github.com/user-attachments/assets/734652ec-d64a-4580-a9d1-849b5d654039" />
-<img width="1919" height="1025" alt="image" src="https://github.com/user-attachments/assets/450f0f8b-9b37-49b4-976c-37d101501caa" />
 <img width="1919" height="1025" alt="image" src="https://github.com/user-attachments/assets/1e1eb956-927e-477b-8553-988b51288c99" />
 <img width="1919" height="1025" alt="image" src="https://github.com/user-attachments/assets/3b0f54da-565e-4a52-a04c-a82fd044acc0" />
 <img width="1919" height="1014" alt="image" src="https://github.com/user-attachments/assets/8cac4e62-27b9-4dac-919f-1fea6ce3d459" />
