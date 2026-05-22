@@ -1,3 +1,4 @@
+import re
 from langchain_core.messages import (
     SystemMessage,
     HumanMessage,
@@ -11,6 +12,81 @@ from utils.config import (
     llm,
 )
 
+# ---------------------------------------------------
+# FINAL SANITIZER
+# ---------------------------------------------------
+def sanitize_output(
+    text: str
+) -> str:
+
+    if not text:
+        return ""
+
+    text = (
+        text
+        .replace("```markdown", "")
+        .replace("```", "")
+        .strip()
+    )
+
+    banned_patterns = [
+
+        r"changes made:?",
+        r"improved readability.*",
+        r"enhanced transitions.*",
+        r"improved flow.*",
+        r"improved human feel.*",
+        r"preserved markdown.*",
+        r"maintained depth.*",
+        r"seo-style blogs.*",
+        r"here'?s the revised version.*",
+        r"below is the revised article.*",
+        r"i made the following changes.*",
+        r"editor notes.*",
+        r"rewritten article.*",
+        r"optimization changes.*",
+
+    ]
+
+    cleaned_lines = []
+
+    started = False
+
+    for line in text.split("\n"):
+
+        clean = line.strip()
+
+        lower = clean.lower()
+
+        skip = False
+
+        for pattern in banned_patterns:
+
+            if re.search(
+                pattern,
+                lower
+            ):
+                skip = True
+                break
+
+        if skip:
+            continue
+
+        if not started:
+
+            if clean.startswith("#"):
+                started = True
+                cleaned_lines.append(line)
+
+            continue
+
+        cleaned_lines.append(line)
+
+    cleaned = "\n".join(
+        cleaned_lines
+    ).strip()
+
+    return cleaned
 
 def editor_node(state) -> dict:
     """
@@ -67,7 +143,7 @@ def editor_node(state) -> dict:
             max_tokens=2500,
             temperature=0.4,
         )
-
+        merged_markdown = sanitize_output(merged_markdown)
         response = editor_llm.invoke(
             [
                 SystemMessage(
@@ -88,17 +164,23 @@ IMPORTANT:
 This is already a completed blog.
 
 Your task is ONLY to:
-- improve readability
-- improve transitions
-- improve flow
-- reduce robotic phrasing
-- improve human feel
+- normalize markdown formatting
+- improve markdown hierarchy
+- improve spacing
+- improve paragraph readability
+- reduce repetitive sentence openings
+- preserve article structure
+- preserve article meaning
 
 DO NOT:
-- remove sections
-- shorten content heavily
-- rewrite the entire article
-- reduce depth
+- explain edits
+- mention improvements
+- summarize changes
+- output commentary
+- output editor notes
+- rewrite the article
+- shorten the article heavily
+- describe formatting changes
 
 Preserve:
 - ALL headings
@@ -106,6 +188,17 @@ Preserve:
 - ALL sections
 - ALL explanations
 - ALL article flow
+
+CRITICAL OUTPUT RULES:
+- Output ONLY final markdown
+- Each section should have 1-2 paragraphs max
+- Do not use bullet points in blogs
+- NEVER say "Changes made"
+- NEVER explain improvements
+- NEVER output bullet summaries
+- NEVER output editor commentary
+- NEVER describe modifications
+- NEVER behave like an editor
 
 BLOG MARKDOWN:
 
@@ -116,12 +209,7 @@ BLOG MARKDOWN:
             ]
         )
 
-        final_markdown = (
-            response.content
-            .replace("```markdown", "")
-            .replace("```", "")
-            .strip()
-        )
+        final_markdown = sanitize_output(response.content)
 
         # ---------------------------------------------------
         # Truncation Protection
@@ -170,11 +258,8 @@ BLOG MARKDOWN:
     # ---------------------------------------------------
     # Final Cleanup
     # ---------------------------------------------------
-    final_markdown = (
-        final_markdown
-        .replace("```markdown", "")
-        .replace("```", "")
-        .strip()
+    final_markdown = sanitize_output(
+    final_markdown
     )
 
     return {

@@ -14,6 +14,7 @@ from pydantic import (
 # Task Schema
 # ---------------------------------------------------
 class Task(BaseModel):
+
     id: int
 
     title: str
@@ -31,17 +32,20 @@ class Task(BaseModel):
         max_length=6
     )
 
+    # ---------------------------------------------------
+    # UPDATED FOR LONGER SECTIONS
+    # ---------------------------------------------------
     target_words: int = Field(
-        default=500,
-        ge=250,
-        le=900,
+        default=550,
+        ge=350,
+        le=1000,
         description=(
             "Recommended section length."
         )
     )
 
     # ---------------------------------------------------
-    # NEW ADVANCED FIELDS
+    # ADVANCED SECTION FIELDS
     # ---------------------------------------------------
     section_purpose: str = Field(
         default="inform"
@@ -59,7 +63,7 @@ class Task(BaseModel):
         "light",
         "medium",
         "deep",
-    ] = "medium"
+    ] = "deep"
 
     emotional_tone: str = Field(
         default=""
@@ -83,6 +87,7 @@ class Task(BaseModel):
 # Blog Plan Schema
 # ---------------------------------------------------
 class Plan(BaseModel):
+
     blog_title: str
 
     audience: str
@@ -110,7 +115,7 @@ class Plan(BaseModel):
     ] = "explainer"
 
     # ---------------------------------------------------
-    # NEW BLOG-LEVEL FIELDS
+    # BLOG-LEVEL WRITING STYLE
     # ---------------------------------------------------
     narrative_style: str = Field(
         default="engaging"
@@ -136,7 +141,7 @@ class Plan(BaseModel):
         "minimal",
         "moderate",
         "strong",
-    ] = "moderate"
+    ] = "strong"
 
     # ---------------------------------------------------
     # Constraints
@@ -146,12 +151,19 @@ class Plan(BaseModel):
     )
 
     # ---------------------------------------------------
-    # Tasks
+    # UPDATED TASK COUNT
+    # ---------------------------------------------------
+    # OLD:
+    # min_length=5,
+    # max_length=8
+    #
+    # NEW:
+    # Fewer but deeper sections
     # ---------------------------------------------------
     tasks: List[Task] = Field(
         ...,
-        min_length=5,
-        max_length=8
+        min_length=4,
+        max_length=6
     )
 
 
@@ -159,6 +171,7 @@ class Plan(BaseModel):
 # Research Evidence
 # ---------------------------------------------------
 class EvidenceItem(BaseModel):
+
     title: str
 
     url: str
@@ -174,6 +187,7 @@ class EvidenceItem(BaseModel):
 # Router Decision
 # ---------------------------------------------------
 class RouterDecision(BaseModel):
+
     needs_research: bool
 
     mode: Literal[
@@ -199,6 +213,7 @@ class RouterDecision(BaseModel):
 # Evidence Pack
 # ---------------------------------------------------
 class EvidencePack(BaseModel):
+
     evidence: List[EvidenceItem] = Field(
         default_factory=list
     )

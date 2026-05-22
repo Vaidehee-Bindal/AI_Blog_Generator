@@ -129,8 +129,9 @@ graph.add_edge(
     "orchestrator"
 )
 
-# IMPORTANT:
-# Sequential writing
+# ---------------------------------------------------
+# Sequential Writing
+# ---------------------------------------------------
 graph.add_edge(
     "orchestrator",
     "writer"
@@ -146,6 +147,9 @@ graph.add_edge(
     "editor"
 )
 
+# ---------------------------------------------------
+# Final Output
+# ---------------------------------------------------
 graph.add_edge(
     "editor",
     END

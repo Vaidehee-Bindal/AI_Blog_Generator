@@ -1,3 +1,5 @@
+import re
+
 from langchain_core.messages import (
     SystemMessage,
     HumanMessage,
@@ -10,6 +12,119 @@ from prompts.writer_prompt import (
 from utils.config import (
     writer_llm,
 )
+
+
+# ---------------------------------------------------
+# FINAL OUTPUT SANITIZER
+# ---------------------------------------------------
+def sanitize_output(
+    text: str
+) -> str:
+
+    if not text:
+        return ""
+
+    # ---------------------------------------------------
+    # Remove markdown code fences
+    # ---------------------------------------------------
+    text = (
+        text
+        .replace("```markdown", "")
+        .replace("```", "")
+        .strip()
+    )
+
+    # ---------------------------------------------------
+    # Hard banned phrases
+    # ---------------------------------------------------
+    banned_patterns = [
+
+        r"changes made:?",
+        r"improved readability.*",
+        r"enhanced transitions.*",
+        r"improved human feel.*",
+        r"preserved markdown.*",
+        r"maintained depth.*",
+        r"seo-style blogs.*",
+        r"here'?s the revised version.*",
+        r"below is the revised article.*",
+        r"i made the following changes.*",
+        r"editor notes.*",
+        r"rewritten article.*",
+        r"optimization changes.*",
+
+    ]
+
+    lines = text.split("\n")
+
+    cleaned_lines = []
+
+    started = False
+
+    for line in lines:
+
+        clean = line.strip()
+
+        lower = clean.lower()
+
+        # ---------------------------------------------------
+        # Remove banned phrases
+        # ---------------------------------------------------
+        skip = False
+
+        for pattern in banned_patterns:
+
+            if re.search(
+                pattern,
+                lower
+            ):
+                skip = True
+                break
+
+        if skip:
+            continue
+
+        # ---------------------------------------------------
+        # Start ONLY from real markdown heading
+        # ---------------------------------------------------
+        if not started:
+
+            if clean.startswith("##"):
+                started = True
+                cleaned_lines.append(line)
+
+            continue
+
+        # ---------------------------------------------------
+        # Remove stray bullets from meta leakage
+        # ---------------------------------------------------
+        if clean.startswith("-"):
+
+            if any(
+                bad in lower
+                for bad in [
+                    "improved",
+                    "enhanced",
+                    "preserved",
+                    "maintained",
+                ]
+            ):
+                continue
+
+        cleaned_lines.append(line)
+
+    text = "\n".join(
+        cleaned_lines
+    ).strip()
+
+    # ---------------------------------------------------
+    # Emergency fallback
+    # ---------------------------------------------------
+    if not text.startswith("##"):
+
+        return ""
+
+    return text
 
 
 def writer_node(state) -> dict:
@@ -154,14 +269,47 @@ FORMATTING:
 - Keep content highly scannable
 - Use clean markdown hierarchy
 
-PARAGRAPHS:
-- Maximum 5-6 sentences
-- Most sections under 250 words
-- Avoid unnecessary repetition
+SECTIONS:
+- Every section MUST contain at least 2 substantial paragraphs
+- Important sections may contain 3 paragraphs
+- Never end a section after a single paragraph
+- Sections should feel rich, developed, and visually substantial
+
+PARAGRAPH STRUCTURE RULES:
+- Each paragraph should contain:
+  - 4-7 sentences on average
+
+- Use paragraph variety naturally
+- Some paragraphs can be shorter for readability
+- Important explanations should be longer
+
+SECTION DEPTH:
+- Most sections should be between 300-600 words
+- Important sections may be longer
+- Avoid shallow summaries
+- Avoid rushed explanations
+- Expand concepts naturally before moving forward
+
+FLOW RULES:
+- First paragraph:
+  introduce the concept clearly
+
+- Second paragraph:
+  deepen the discussion with explanations, examples, or insights
+
+- Third paragraph (when relevant):
+  discuss implications, practical applications, workflows, or broader observations
+
+WRITING STYLE:
+- Write like a professional long-form blog author
+- Maintain depth without sounding repetitive
+- Develop ideas progressively across paragraphs
+- Avoid compressed AI-summary style writing
 
 EXAMPLES:
 - Prefer practical real-world examples
 - Mention tools, workflows, systems, or use-cases naturally
+- Use observations and implications to enrich sections
 """
 
         elif tone in marketing_tones:
@@ -188,11 +336,6 @@ FORMATTING:
 - Use numbered lists occasionally
 - Use bullet points sparingly
 - Optimize readability
-
-PARAGRAPHS:
-- Short-medium length
-- Internet-friendly formatting
-- Avoid large text blocks
 """
 
         elif tone in storytelling_tones:
@@ -308,14 +451,50 @@ Recent openings already used:
 
 DO NOT repeat similar openings.
 
-FORBIDDEN AI PATTERNS:
-- "So..."
-- "As we..."
-- "Imagine..."
-- "In today's world..."
-- "Let's explore..."
-- "Now let's..."
-- "You might think..."
+FORBIDDEN AI OPENINGS:
+NEVER repeatedly begin paragraphs with:
+- So
+- As we
+- As we look
+- As technology evolves
+- In today's world
+- Imagine
+- For example
+- For instance
+- To understand
+- It is important to
+- In conclusion
+- Furthermore
+- Moreover
+- On the other hand
+- In addition
+- Another important aspect
+- One key factor
+- This highlights
+- This demonstrates
+- This means
+- This is because
+
+VARIATION RULES:
+- Every paragraph should begin differently
+- Alternate between:
+  - direct insight
+  - short observation
+  - fact
+  - example
+  - contrast
+  - technical statement
+  - rhetorical transition
+
+- Avoid repeating sentence rhythm
+- Avoid repetitive educational phrasing
+- Avoid textbook-style explanation flow
+
+DEPTH RULES:
+- Do not conclude ideas too quickly
+- Expand concepts naturally before moving to next heading
+- Use layered explanation instead of short summaries
+- Develop ideas across multiple paragraphs
 
 LIST USAGE RULES:
 - Never overuse bullet points
@@ -328,11 +507,37 @@ QUOTE RULES:
 - Keep quotes relevant and natural
 - Never overuse quotes
 
-MARKDOWN RULES:
-- ALWAYS use markdown headings
-- Use clean spacing
-- Use proper markdown hierarchy
-- Keep formatting readable
+TITLE DIVERSITY RULES:
+- Do NOT repeat the full topic name in every heading
+- Use semantic variation
+- Use shorter natural headings
+- Avoid keyword stuffing
+
+MARKDOWN HIERARCHY RULES:
+- EVERY section MUST begin with:
+## Section Heading
+- Optional subtopics inside section MUST use:
+### Subheading
+- NEVER write plain text titles
+- NEVER write bold headings instead of markdown headings
+- NEVER skip markdown hierarchy
+- NEVER place paragraphs before the ## heading
+
+VALID FORMAT:
+## Main Heading
+
+Paragraph...
+
+### Subheading
+
+Paragraph...
+
+### Another Subheading
+
+Paragraph...
+
+- The VERY FIRST line of output MUST start with ##
+- Maintain proper spacing between headings and paragraphs
 
 CRITICAL OUTPUT RULES:
 - NEVER explain edits
@@ -358,98 +563,22 @@ ONLY output actual blog content.
                 ]
             )
 
-            section_markdown = (
-                response.content.strip()
+            # ---------------------------------------------------
+            # SANITIZE OUTPUT
+            # ---------------------------------------------------
+            section_markdown = sanitize_output(
+                response.content
             )
 
             # ---------------------------------------------------
-            # Cleanup
+            # Empty Recovery
             # ---------------------------------------------------
-            section_markdown = (
-                section_markdown
-                .replace("```markdown", "")
-                .replace("```", "")
-                .strip()
-            )
+            if not section_markdown.strip():
 
-            # ---------------------------------------------------
-            # HARD REMOVE EDITOR LEAKAGE
-            # ---------------------------------------------------
-            meta_phrases = [
-
-                "changes made",
-                "improved readability",
-                "enhanced transitions",
-                "reduced robotic phrasing",
-                "improved human feel",
-                "preserved all headings",
-                "maintained depth",
-                "seo-style blogs",
-                "here's the revised version",
-                "below is the revised article",
-                "i made the following changes",
-                "preserved markdown formatting",
-                "improved flow",
-                "preserved article flow",
-                "enhanced flow",
-                "maintained continuity",
-                "rewritten version",
-                "revised article",
-                "editor improvements",
-                "optimization changes",
-
-            ]
-
-            lower_text = section_markdown.lower()
-
-            if any(
-                phrase in lower_text
-                for phrase in meta_phrases
-            ):
-
-                lines = section_markdown.split("\n")
-
-                cleaned_lines = []
-
-                started = False
-
-                for line in lines:
-
-                    clean = line.strip()
-
-                    if clean.startswith("##"):
-                        started = True
-
-                    if started:
-                        cleaned_lines.append(line)
-
-                cleaned = "\n".join(
-                    cleaned_lines
-                ).strip()
-
-                if cleaned:
-                    section_markdown = cleaned
-
-            # ---------------------------------------------------
-            # REMOVE STRAY META LINES
-            # ---------------------------------------------------
-            filtered_lines = []
-
-            for line in section_markdown.split("\n"):
-
-                clean = line.strip().lower()
-
-                if any(
-                    phrase in clean
-                    for phrase in meta_phrases
-                ):
-                    continue
-
-                filtered_lines.append(line)
-
-            section_markdown = "\n".join(
-                filtered_lines
-            ).strip()
+                section_markdown = (
+                    f"## {task.title}\n\n"
+                    f"Content unavailable."
+                )
 
             # ---------------------------------------------------
             # Track Openings
@@ -485,16 +614,6 @@ ONLY output actual blog content.
 
                 pass
 
-            # ---------------------------------------------------
-            # Empty Fallback
-            # ---------------------------------------------------
-            if not section_markdown.strip():
-
-                section_markdown = (
-                    f"## {task.title}\n\n"
-                    f"Content unavailable."
-                )
-
         except Exception as e:
 
             print(
@@ -508,13 +627,27 @@ ONLY output actual blog content.
             )
 
         # ---------------------------------------------------
+        # SANITIZE BEFORE SAVING
+        # ---------------------------------------------------
+        clean_section = sanitize_output(
+            section_markdown
+        )
+
+        # ---------------------------------------------------
         # Store Section
         # ---------------------------------------------------
         sections.append(
             (
                 task.id,
-                section_markdown
+                clean_section
             )
+        )
+
+        # ---------------------------------------------------
+        # SANITIZE BEFORE CONTEXT MEMORY
+        # ---------------------------------------------------
+        safe_context = sanitize_output(
+            section_markdown
         )
 
         # ---------------------------------------------------
@@ -522,7 +655,7 @@ ONLY output actual blog content.
         # ---------------------------------------------------
         running_context += (
             "\n\n"
-            + section_markdown[:3000]
+            + safe_context[:3000]
         )
 
     return {

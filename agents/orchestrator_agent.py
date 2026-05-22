@@ -635,10 +635,10 @@ Every blog MUST have unique section titles.
                             int(
                                 task.get(
                                     "target_words",
-                                    280
+                                    500
                                 )
                             ),
-                            250,
+                            450,
                         ),
                         350,
                     ),
