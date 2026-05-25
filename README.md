@@ -12,7 +12,6 @@ This project generates editorial blogs with:
 - Table of contents navigation
 - Execution plan & evidence display
 
----
 # Live Link
 Try it here - https://ai-blogwriter.streamlit.app/
 
@@ -35,7 +34,6 @@ https://github.com/user-attachments/assets/fb6747c0-5609-4a6e-9abb-a4884e281a41
 - Optimized for Groq API
 - Tavily web search integration
 
----
 
 # Tech Stack
 
@@ -46,8 +44,6 @@ https://github.com/user-attachments/assets/fb6747c0-5609-4a6e-9abb-a4884e281a41
 - Tavily Search API
 - Streamlit
 - Markdown Rendering
-
----
 
 # Project Structure
 
@@ -91,7 +87,6 @@ AI-BLOG-WRITER/
 └── README.md
 ```
 
----
 
 # Folder Explanation
 
@@ -119,7 +114,6 @@ Generates detailed long-form blog sections.
 
 Humanizes and refines the final blog for SEO optimization.
 
----
 
 ## `generated_blogs/`
 
@@ -134,7 +128,6 @@ generated_blogs/
 └── Parenting_Guide.md
 ```
 
----
 
 ## `models/`
 
@@ -148,7 +141,6 @@ Defines Pydantic schemas for plans, tasks, evidence, etc.
 
 Defines LangGraph workflow state management.
 
----
 
 ## `prompts/`
 
@@ -156,7 +148,6 @@ Contains all system prompts for the AI agents.
 
 Each agent has its own prompt engineering file.
 
----
 
 ## `tools/`
 
@@ -166,7 +157,6 @@ Contains external integrations.
 
 Handles Tavily web search integration.
 
----
 
 ## `utils/`
 
@@ -181,7 +171,6 @@ Initializes:
 - Model configuration
 - Environment variables
 
----
 
 ## `workflow/`
 
@@ -196,7 +185,6 @@ Defines:
 - Graph execution flow
 - Sequential blog generation pipeline
 
----
 
 ## `frontend.py`
 
@@ -212,13 +200,11 @@ Features:
 - Evidence display
 - Logs & execution plan
 
----
 
 ## `main.py`
 
 Optional project entry point.
 
----
 
 # Environment Setup
 
@@ -239,7 +225,6 @@ GROQ_API_KEY=your_groq_api_key_here
 TAVILY_API_KEY=your_tavily_api_key_here
 ```
 
----
 
 # Installation
 
@@ -276,15 +261,12 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
----
 
 # Run Project
 
 ```bash
 streamlit run frontend.py
 ```
-
----
 
 # Workflow Overview
 
@@ -310,8 +292,6 @@ Save to generated_blogs/
 
 <img width="1622" height="969" alt="workflow" src="https://github.com/user-attachments/assets/766fcbb5-daa0-46e2-b80e-aa95b7053479" />
 
----
-
 # Output Features
 
 Generated blogs include:
@@ -333,8 +313,6 @@ Generated blogs include:
 <img width="1919" height="1028" alt="image" src="https://github.com/user-attachments/assets/81a4b82d-0e08-467c-856b-5c7093ccfcca" />
 
 
----
-
 # Notes
 
 - Optimized primarily for **Groq LLM inference speed**
@@ -342,4 +320,3 @@ Generated blogs include:
 - Streamlit frontend designed for publication-style reading
 - Blogs are saved automatically
 
----
